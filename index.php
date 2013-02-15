@@ -97,6 +97,7 @@ Let R and S be positive integers which are relatively prime and let A and B be a
 
 
 <footer>
+	<div class="pull-right" style="margin:30px;color:#444444">Bryan Saltzman - 2013</div>
 	<script src="js/toastr.js" type="text/javascript"></script>
 	<script src="js/knockout-2.2.1.js" type="text/javascript"></script>
 	<script src="js/Highcharts-2.3.5/js/highcharts.js" type="text/javascript"></script>

@@ -46,15 +46,24 @@ function buildScatterChart(){
             xAxis: {
                 title: {
                     enabled: true,
-                    text: 'Integers'
+                    text: ' '
                 },
                 startOnTick: true,
                 endOnTick: true,
-                showLastLabel: true
+                showLastLabel: true,
+                min: 0,
+                max: 100
             },
             yAxis: {
                 title: {
                     text: 'Solutions'
+                },
+                min: 0,
+                labels:{
+                            style: {
+								color: '#FFFFFF',
+								fontWeight: 'bold'
+							}
                 }
             },
             tooltip: {
@@ -63,6 +72,7 @@ function buildScatterChart(){
                 }
             },
             legend: {
+            	enabled: false,
                 layout: 'vertical',
                 align: 'right',
                 verticalAlign: 'top',
@@ -119,7 +129,11 @@ function buildChart(){
                     }
                 }
             },
-            legend: {
+            xAxis:{
+	            min:0,
+	            max:100
+            },
+           legend: {
                 layout: 'vertical',
                 align: 'left',
                 verticalAlign: 'top',
@@ -178,20 +192,17 @@ function CongViewModel() {
 //    this.mod = ko.observable("5");
 
 
-	var yMod = getRandom(2, 10)  * 2 + 1;  // odd number
-    var yRemain = getRandom(0, 4);
-    var yMod2 = getRandom(2, 10)  * 2 + 1;  // odd number
-    var yRemain2 = getRandom(0, 4);
-        // Editable data
-    self.congs = ko.observableArray([
-    	new Cong(yRemain, yMod),
-    	new Cong(yRemain2, yMod2)
+	self.congs = ko.observableArray([
+    	new Cong(1, 2),
+    	new Cong(2, 3)
     ]);
 
     self.addCong = function() {
     	//var myMod = getRandom(3, 8) * 2 + 1;  // odd number
-    	var myMod = getRandom(6, 29);  // odd number
-    	var myRemain = getRandom(0, 5);  // odd number
+    	var primeArray = [5,7,11,13,17,19,23,29];
+    	var myIndex = getRandom(0, (primeArray.length - 1) );  // odd number
+    	var myMod = primeArray[myIndex];
+    	var myRemain = getRandom(0, 4);  // odd number
     	toastr.warning(0 + " mod " + myMod + " added");
         self.congs.push(new Cong(myRemain, myMod));
     }
@@ -253,7 +264,7 @@ function CongViewModel() {
 		   		var realVal = 0;
 		   		for(var k = 0; realVal <= 100; k++){
 			   		var toAddScatter = k * thisMod + thisRemainder;
-			   		thisScatterSeriesData[k] = [toAddScatter, 0];
+			   		thisScatterSeriesData[k] = [toAddScatter, i];
 			   		realVal = toAddScatter;
 		   		}
 
@@ -271,11 +282,12 @@ function CongViewModel() {
 		   buildScatterChart();
 	   	   var thisMult = mod_array[0];
 	   	   var thisRemain = remainder_array[0];
-	   	   for(var j = 0; j < 1000000; j++){
+	   	   for(var j = 0; j < 100000; j++){
 			   var match = true;
 			   var testNum = thisMult * j + thisRemain;
 			   for(var k = 1; k < count && match; k++){
-				   if( testNum % mod_array[k] - remainder_array[k] == 0){
+			   	   var congRemainder = parseInt(testNum % mod_array[k] - remainder_array[k]);
+				   if( congRemainder == 0){
 					   match = true;
 				   }else{
 					   match = false;
@@ -339,17 +351,28 @@ function getRandom(min, max) {
     return min + Math.floor(Math.random() * (max - min + 1));
 }
 
-function gcd(text1,text2){
-  var gcd=1;
-  if (text1>text2) {text1=text1+text2; text2=text1-text2; text1=text1-text2;}
-  if ((text2==(Math.round(text2/text1))*text1)) {gcd=text1}else {
-   for (var i = Math.round(text1/2) ; i > 1; i=i-1) {
-    if ((text1==(Math.round(text1/i))*i))
-     if ((text2==(Math.round(text2/i))*i)) {gcd=i; i=-1;}
-   }
-  }
-  return gcd;
+
+
+/*
+ * Returns the GCD of the given integers. Each input must be non-negative.
+ */
+function gcd(x, y) {
+	while (y != 0) {
+		var z = x % y;
+		x = y;
+		y = z;
+	}
+	return x;
 }
+
+
+/*
+ * Tests whether the given string represents an integer.
+ */
+function isInteger(str) {
+	return /^-?\d+$/.test(str);
+}
+
 
 function lcm(t1,t2){
   var cm=1;
